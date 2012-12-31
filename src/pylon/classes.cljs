@@ -2,12 +2,24 @@
 
 (defn create-ctor []
   (js* "function ctor() {
-  var obj = this;
+  var obj = this, p = Object.getPrototypeOf(this),
+      superclass = p.__pylon$superclass;
   if (this.__pylon$bind) {
     this.__pylon$bind.forEach(function(f) {
       obj[f] = goog.bind(obj[f], obj);
     });
   }
+  this.__pylon_invokeSuper = function(name) {
+    var args = goog.array.toArray(arguments).slice(1);
+    if (superclass.__pylon$classname) {
+      name = \"__pylon$method$\" + name;
+      args = goog.array.concat(obj, args);
+    }
+    if (name == \"constructor\")
+      return superclass.apply(obj, args);
+    else
+      return superclass.prototype[name].apply(obj, args);
+  };
 //  if (this.constructor) this.constructor();
 }"))
 
@@ -22,3 +34,8 @@
   if (!p.__pylon$bind) p.__pylon$bind = [];
   p.__pylon$bind.push(name);
 })(~{ctor}, ~{methodname}, ~{funcname}, ~{func})"))
+
+(defn define-superclass [childclass superclass]
+  (when superclass
+    (goog/inherits childclass superclass)
+    (js* "~{childclass}.prototype.__pylon$superclass = ~{superclass}")))
