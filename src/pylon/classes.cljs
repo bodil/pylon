@@ -15,12 +15,12 @@
       name = \"__pylon$method$\" + name;
       args = goog.array.concat(obj, args);
     }
-    if (name == \"constructor\")
+    if (name == \"constructor\" && !superclass.prototype[name])
       return superclass.apply(obj, args);
     else
       return superclass.prototype[name].apply(obj, args);
   };
-//  if (this.constructor) this.constructor();
+  if (this.constructor) this.constructor.apply(this, arguments);
 }"))
 
 (defn apply-method [ctor func methodname funcname]
