@@ -36,7 +36,12 @@
   p.__pylon$bind.push(name);
 })(~{ctor}, ~{methodname}, ~{funcname}, ~{func})"))
 
-(defn define-superclass [childclass superclass]
+(defn define-superclass [ctor superclass]
   (when superclass
-    (goog/inherits childclass superclass)
-    (js* "~{childclass}.prototype.__pylon$superclass = ~{superclass}")))
+    (goog/inherits ctor superclass)
+    (js* "~{ctor}.prototype.__pylon$superclass = ~{superclass}")))
+
+(defn apply-mixins [ctor mixins]
+  (when (seq mixins)
+    (doseq [mixin mixins]
+      (goog/mixin (.-prototype ctor) (or (.-prototype mixin) mixin)))))

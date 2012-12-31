@@ -28,13 +28,14 @@
 
 (defmacro defclass
   [class-name & args]
-  (let [[{:keys [extends]} specs] (parse-args args)
+  (let [[{:keys [extends mixin]} specs] (parse-args args)
         methods (map method-from-spec specs)
         ctor (gensym "ctor")]
     `(let [~ctor (pylon.classes/create-ctor)]
        (aset ~ctor "__pylon$classname" ~(name class-name))
        (def ~class-name ~ctor)
        (pylon.classes/define-superclass ~ctor ~extends)
+       (pylon.classes/apply-mixins ~ctor ~mixin)
        ~@(for [{:keys [name fn-name sig body]} methods]
            `(let [func# ~(method-def name sig body)]
               (pylon.classes/apply-method ~ctor func# ~name ~fn-name))))))
