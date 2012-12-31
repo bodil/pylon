@@ -1,4 +1,4 @@
-(defproject org.bodil/pylon "0.1.0-SNAPSHOT"
+(defproject org.bodil/pylon "0.1.0"
   :description "JS interop tools for Cljs"
   :url "https://github.com/bodil/pylon"
   :license {:name "Apache License, version 2.0"
