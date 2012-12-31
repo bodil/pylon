@@ -12,11 +12,12 @@
          ~@body))))
 
 (defn- method-from-spec [spec]
-  (let [name (name (first spec))]
-    {:name name
-     :fn-name (method-fn-name name)
-     :sig (second spec)
-     :body (drop 2 spec)}))
+  (if (= 'defn (first spec)) (method-from-spec (rest spec))
+    (let [name (name (first spec))]
+      {:name name
+       :fn-name (method-fn-name name)
+       :sig (second spec)
+       :body (drop 2 spec)})))
 
 (defn- parse-args [args]
   (loop [args args opts {}]
