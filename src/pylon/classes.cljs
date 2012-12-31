@@ -20,7 +20,8 @@
     else
       return superclass.prototype[name].apply(obj, args);
   };
-  if (this.constructor) this.constructor.apply(this, arguments);
+  if (this.hasOwnProperty(\"constructor\"))
+    this.constructor.apply(this, arguments);
 }"))
 
 (defn apply-method [ctor func methodname funcname]
