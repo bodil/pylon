@@ -2,6 +2,23 @@
 
 A Javascript class system in 100% Clojurescript.
 
+## Rationale
+
+Class based OO is not cool. In fact, it's quite the opposite of the
+kind of code you should be writing as a Clojurescript developer.
+However, you sometimes find yourself having to deal with Javascript's
+ecosystem—certain of its more popular libraries in particular—out of
+necessity. Clojurescript's core interop facilities are fine for
+dealing with dumb JS objects, but when you have to get into more
+advanced OO—creating classes and subclasses—the primitives are no
+longer adequate.
+
+Pylon is intended as an interop facility. It is most emphatically not
+intended as a tool for turning Clojurescript into an OO language.
+Don't build your applications on it; be smart and use functional
+programming instead. Pylon is only for when you really need to deal
+with legacy Javascript code.
+
 ## Installation
 
 To use Pylon in your project, put the following in the `:dependencies`
@@ -72,6 +89,14 @@ actually add more parent prototypes, which would be impossible.
 Don't use advanced optimisation when compiling projects that use
 Pylon. It will break horribly. Simple optimisation works fine, so
 stick with that.
+
+Pylon currently doesn't try to convert Clojure symbols into a form
+suitable for Javascript syntax, whereas Clojurescript's interop
+primitives do. You might therefore want to avoid using symbol names
+with dashes in them. A method called `get-name` will be called just
+that, but trying to access it using Clojurescript notation
+`(.get-name obj)` will fail, because Clojurescript helpfully converts
+the dash into an underscore for you.
 
 # License
 
