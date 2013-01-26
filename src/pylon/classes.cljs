@@ -22,7 +22,7 @@
   (fn ctor [& args]
     (this-as
      this
-     (let [p (js/Object.getPrototypeOf this)
+     (let [p (.getPrototypeOf js/Object this)
            superclass (aget p "__pylon$superclass")]
        (when-let [binds (find-methods p)]
          (doseq [bind binds]
