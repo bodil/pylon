@@ -1,5 +1,5 @@
 (defproject org.bodil/pylon "0.2.0"
-  :description "JS interop tools for Cljs"
+  :description "A Javascript class system in 100% Clojurescript"
   :url "https://github.com/bodil/pylon"
   :license {:name "Apache License, version 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
