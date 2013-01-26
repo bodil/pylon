@@ -5,10 +5,11 @@
   (str "__pylon$method$" method-name))
 
 (defn- method-def
-  [method-name sig body]
+  [ctor method-name sig body]
   (let [sig-with-this (apply vector 'this sig)]
     `(fn ~(symbol method-name) ~sig-with-this
-       (let [~'__pylon_method_name ~method-name]
+       (let [~'__pylon_method_name ~method-name
+             ~'__pylon_prototype (.-prototype ~ctor)]
          ~@body))))
 
 (defn- method-from-spec [spec]
@@ -35,7 +36,6 @@
     `(let [~ctor (pylon.classes/create-ctor)]
 
        ;; Build the constructor
-       (aset ~ctor "__pylon$classname" ~(name class-name))
        (def ~class-name ~ctor)
 
        ;; Extend with superclass prototype
@@ -49,12 +49,14 @@
            `(let [proto# (or (.-prototype ~m) ~m)]
               (goog/mixin (.-prototype ~class-name) proto#)))
 
+       (aset (.-prototype ~ctor) "__pylon$classname" ~class-string)
+
        ;; Define methods
        ~@(for [{:keys [name fn-name sig body]} methods
                :let [dashname (symbol (str "-" name))]]
-           `(let [func# ~(method-def name sig body)]
+           `(let [func# ~(method-def class-name name sig body)]
               ;; Apply the method to the prototype
-              (pylon.classes/apply-method ~ctor func# ~name ~fn-name)
+              (aset (.-prototype ~class-name) ~fn-name func#)
               (set! (.. ~class-name -prototype ~dashname)
                     (pylon.classes/method-wrapper ~fn-name))
               ;; Export the method name
@@ -65,4 +67,5 @@
        (goog/exportSymbol ~class-string ~class-name))))
 
 (defmacro super [& args]
-  `(.__pylon_invokeSuper ~'this ~'__pylon_method_name ~@args))
+  `(let [super# (aget ~'__pylon_prototype "__pylon$superclass")]
+     (pylon.classes/invoke-super super# ~'__pylon_method_name ~'this ~args)))

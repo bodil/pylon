@@ -84,16 +84,6 @@ prototypal inheritance behind when we do this: properties are copied
 from the mixin objects into your object prototype; it does not
 actually add more parent prototypes, which would be impossible.
 
-## Caveats
-
-Pylon currently doesn't try to convert Clojure symbols into a form
-suitable for Javascript syntax, whereas Clojurescript's interop
-primitives do. You might therefore want to avoid using symbol names
-with dashes in them. A method called `get-name` will be called just
-that, but trying to access it using Clojurescript notation
-`(.get-name obj)` will fail, because Clojurescript helpfully converts
-the dash into an underscore for you.
-
 # License
 
 Copyright 2012 Bodil Stokke
