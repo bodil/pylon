@@ -32,20 +32,10 @@
 (defn apply-method [ctor func methodname funcname]
   (let [p (.-prototype ctor)]
     (aset p funcname func)
-    (aset p methodname
-          (fn [& args]
-            (this-as this (apply (aget this funcname) (cons this args)))))
     (when-not (aget p "__pylon$bind")
       (aset p "__pylon$bind" (array)))
     (.push (aget p "__pylon$bind") methodname)))
 
-(defn define-superclass [ctor superclass]
-  (when superclass
-    (goog/inherits ctor superclass)
-    (let [p (.-prototype ctor)]
-      (aset p "__pylon$superclass" superclass))))
-
-(defn apply-mixins [ctor mixins]
-  (when (seq mixins)
-    (doseq [mixin mixins]
-      (goog/mixin (.-prototype ctor) (or (.-prototype mixin) mixin)))))
+(defn method-wrapper [funcname]
+  (fn [& args]
+    (this-as this (apply (aget this funcname) (cons this args)))))

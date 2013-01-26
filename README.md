@@ -86,10 +86,6 @@ actually add more parent prototypes, which would be impossible.
 
 ## Caveats
 
-Don't use advanced optimisation when compiling projects that use
-Pylon. It will break horribly. Simple optimisation works fine, so
-stick with that.
-
 Pylon currently doesn't try to convert Clojure symbols into a form
 suitable for Javascript syntax, whereas Clojurescript's interop
 primitives do. You might therefore want to avoid using symbol names
