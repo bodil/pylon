@@ -25,7 +25,7 @@ To use Pylon in your project, put the following in the `:dependencies`
 vector of your `project.clj` file:
 
 ```clojure
-[org.bodil/pylon "0.1.0"]
+[org.bodil/pylon "0.2.0"]
 ```
 
 ## Defining Classes
@@ -67,6 +67,9 @@ and call superclass methods using the `super` macro.
     (aset this "name" name))
   (defn hello []
     (console/log (str "Hello " (.-name this) "!"))))
+
+(.hello (Hello. "everypony"))
+;; => "Hello everypony!"
 
 (defclass HelloSailor :extends Hello
   (defn constructor []
