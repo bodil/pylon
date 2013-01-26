@@ -26,29 +26,7 @@
            superclass (aget p "__pylon$superclass")]
        (when-let [binds (find-methods p)]
          (doseq [bind binds]
-           (aset this bind (goog/bind (aget this bind) this))))
-       ;; (aset this "__pylon_invokeSuper"
-       ;;       (fn [class-name name & args]
-       ;;         (console/log "invokeSuper" class-name name)
-       ;;         (let [p (prototype-for-class
-       ;;                  (js/Object.getPrototypeOf this) class-name)
-       ;;               superclass (aget p "__pylon$superclass")
-       ;;               name (if (aget superclass "__pylon$classname")
-       ;;                      (method-fn-name name) name)
-       ;;               args (if (aget superclass "__pylon$classname")
-       ;;                      (cons this args) args)]
-       ;;           (let [super-method (aget (.-prototype superclass) name)
-       ;;                 super-fn (if (and (= name "constructor")
-       ;;                                   (not super-method))
-       ;;                         superclass super-method)
-       ;;                 args (into-array args)]
-       ;;             (console/log "this" p)
-       ;;             (console/log "super" (.-prototype superclass))
-       ;;             (console/log "method" super-method)
-       ;;             (console/log "fn" super-fn)
-       ;;             (console/log "args" args)
-       ;;             (.apply super-fn this args)))))
-       )
+           (aset this bind (goog/bind (aget this bind) this)))))
      (when (.hasOwnProperty this "constructor")
        (apply (.-constructor this) args))
      this)))
