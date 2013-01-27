@@ -39,9 +39,9 @@ Use the `defclass` macro to build Javascript style classes using Pylon.
 
 (defclass Hello
   (defn constructor [name]
-    (aset this "name" name))
+    (set! @.name name))
   (defn hello []
-    (console/log (str "Hello " (.-name this) "!"))))
+    (console/log (str "Hello " @.name "!"))))
 
 (.hello (Hello. "Kitty"))
 ;; => "Hello Kitty!"
@@ -51,6 +51,15 @@ Note that all methods have a `this` symbol available to them, just
 like in Javascript. Unlike in Javascript, it will always be bound to
 the actual object instance, even when passing an instance method as a
 callback.
+
+Notice the shorthand for referencing object properties: `@.name`
+anywhere inside a `defclass` is synonymous to `(.-name this)`. Thus,
+to read a property `foo` on the current object, simply use `@.foo`,
+and to set the property, use `(set! @.foo value)`. If `foo` is a
+method, you can invoke it directly using `(@.foo)`, or with arguments,
+`(@.foo "bar" "gazonk")`. (Note that this only works reliably on Pylon
+methods, as Clojurescript will clobber `this` when a function is
+called in this way.)
 
 ## Inheritance
 
@@ -64,9 +73,9 @@ and call superclass methods using the `super` macro.
 
 (defclass Hello
   (defn constructor [name]
-    (aset this "name" name))
+    (set! @.name name))
   (defn hello []
-    (console/log (str "Hello " (.-name this) "!"))))
+    (console/log (str "Hello " @.name "!"))))
 
 (.hello (Hello. "everypony"))
 ;; => "Hello everypony!"

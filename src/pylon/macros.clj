@@ -1,12 +1,25 @@
-(ns pylon.macros)
+(ns pylon.macros
+  (:require [clojure.walk :as w]))
 
 (defn- method-fn-name
   [method-name]
   (str "__pylon$method$" method-name))
 
+(defn- transform-body [body]
+  (w/postwalk
+   (fn [form]
+     (if (and (seq? form)
+              (= 2 (count form))
+              (= 'clojure.core/deref (first form))
+              (= "." (subs (name (second form)) 0 1)))
+       (list (symbol (str ".-" (subs (name (second form)) 1))) (symbol "this"))
+       form))
+   body))
+
 (defn- method-def
   [ctor method-name sig body]
-  (let [sig-with-this (apply vector 'this sig)]
+  (let [sig-with-this (apply vector 'this sig)
+        body (transform-body body)]
     `(fn ~(symbol method-name) ~sig-with-this
        (let [~'__pylon_method_name ~method-name
              ~'__pylon_prototype (.-prototype ~ctor)]
