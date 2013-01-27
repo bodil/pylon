@@ -7,16 +7,18 @@
 (defn- pylon-prop? [prop]
   (= "__pylon$" (subs prop 0 8)))
 
-(defn- find-methods [p]
-  (remove pylon-prop? (.getOwnPropertyNames js/Object p)))
+(defn- pylon-parent-proto [p]
+  (when-let [parent (aget p "__pylon$superclass")]
+    (when-let [proto (.-prototype parent)]
+      (when (.hasOwnProperty proto "__pylon$classname")
+        proto))))
 
-(defn- prototype-for-class [obj class-name]
-  (let [this-class (aget obj "__pylon$classname")]
-    (console/log "PFC" class-name "==" this-class)
-    (cond
-     (nil? this-class) obj
-     (= class-name this-class) obj
-     :else (prototype-for-class (aget obj "__pylon$superclass") class-name))))
+(defn- find-props [p]
+  (let [parent (pylon-parent-proto p)
+        props (remove pylon-prop? (.getOwnPropertyNames js/Object p))]
+    (if parent
+      (concat props (find-props parent))
+      props)))
 
 (defn create-ctor []
   (fn ctor [& args]
@@ -24,11 +26,12 @@
      this
      (let [p (.getPrototypeOf js/Object this)
            superclass (aget p "__pylon$superclass")]
-       (when-let [binds (find-methods p)]
-         (doseq [bind binds]
-           (aset this bind (goog/bind (aget this bind) this)))))
-     (when (.hasOwnProperty this "constructor")
-       (apply (.-constructor this) args))
+       (doseq [bind (apply hash-set (find-props p))]
+         (let [func (aget this bind)]
+           (when (fn? func)
+             (aset this bind (goog/bind func this))))))
+     (when-let [constructor (.-constructor this)]
+       (.apply constructor this (into-array args)))
      this)))
 
 (defn invoke-super [superclass method context args]
