@@ -11,6 +11,7 @@
      (if (and (seq? form)
               (= 2 (count form))
               (= 'clojure.core/deref (first form))
+              (symbol? (second form))
               (= "." (subs (name (second form)) 0 1)))
        (list (symbol (str ".-" (subs (name (second form)) 1))) (symbol "this"))
        form))
