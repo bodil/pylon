@@ -25,7 +25,7 @@ To use Pylon in your project, put the following in the `:dependencies`
 vector of your `project.clj` file:
 
 ```clojure
-[org.bodil/pylon "0.2.0"]
+[org.bodil/pylon "0.3.0"]
 ```
 
 ## Defining Classes
